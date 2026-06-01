@@ -29,18 +29,15 @@ export function CrmScreen() {
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState("未対応");
 
-  // 初期のダミーデータリスト
-  const [customers, setCustomers] = useState<Customer[]>([
-    { id: 1003, company: "株式会社ダミー商事", name: "田中 健太", phone: "03-1111-2222", status: "アプローチ中" },
-    { id: 1002, company: "サンプル工業株式会社", name: "佐藤 花子", phone: "06-3333-4444", status: "未対応" },
-    { id: 1001, company: "テストソリューションズ", name: "山田 太郎", phone: "092-555-6666", status: "受注" },
-  ]);
+  // 初期のダミーデータリストを完全に空（クリア）にしました！
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   // 保存ボタンを押したときの処理（RPAにここをクリックさせます）
   const handleSave = () => {
     if (!company) return; // 会社名が空なら何もしない
     
     const newCustomer = {
+      // 最初が0件でも、1001番から綺麗に自動採番がスタートします
       id: customers.length > 0 ? customers[0].id + 1 : 1001,
       company,
       name,
@@ -176,24 +173,33 @@ export function CrmScreen() {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((c) => (
-                  <tr key={c.id} className="border-b border-slate-200 hover:bg-blue-50 transition-colors">
-                    <td className="py-2.5 px-3 border-r border-slate-200 text-slate-500">{c.id}</td>
-                    <td className="py-2.5 px-3 border-r border-slate-200 font-bold text-[#3498db] cursor-pointer hover:underline">{c.company}</td>
-                    <td className="py-2.5 px-3 border-r border-slate-200">{c.name}</td>
-                    <td className="py-2.5 px-3 border-r border-slate-200">{c.phone}</td>
-                    <td className="py-2.5 px-3">
-                      <span className={`px-2 py-1 text-xs font-bold rounded ${
-                        c.status === '未対応' ? 'bg-slate-100 text-slate-600' :
-                        c.status === 'アプローチ中' ? 'bg-blue-100 text-blue-700' :
-                        c.status === '受注' ? 'bg-green-100 text-green-700' :
-                        'bg-amber-100 text-amber-700'
-                      }`}>
-                        {c.status}
-                      </span>
+                {/* 0件のときは「データがありません」という案内を出し、見栄えを整えます */}
+                {customers.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-10 text-center text-slate-400 font-medium bg-slate-50/50 italic">
+                      登録された顧客データはありません。
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  customers.map((c) => (
+                    <tr key={c.id} className="border-b border-slate-200 hover:bg-blue-50 transition-colors">
+                      <td className="py-2.5 px-3 border-r border-slate-200 text-slate-500">{c.id}</td>
+                      <td className="py-2.5 px-3 border-r border-slate-200 font-bold text-[#3498db] cursor-pointer hover:underline">{c.company}</td>
+                      <td className="py-2.5 px-3 border-r border-slate-200">{c.name}</td>
+                      <td className="py-2.5 px-3 border-r border-slate-200">{c.phone}</td>
+                      <td className="py-2.5 px-3">
+                        <span className={`px-2 py-1 text-xs font-bold rounded ${
+                          c.status === '未対応' ? 'bg-slate-100 text-slate-600' :
+                          c.status === 'アプローチ中' ? 'bg-blue-100 text-blue-700' :
+                          c.status === '受注' ? 'bg-green-100 text-green-700' :
+                          'bg-amber-100 text-amber-700'
+                        }`}>
+                          {c.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
